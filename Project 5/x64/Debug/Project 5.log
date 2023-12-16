@@ -1,0 +1,4 @@
+﻿  render.cpp
+C:\Users\arjen\source\repos\Project 5\render.cpp(37,28): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\arjen\source\repos\Project 5\render.cpp(68,23): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  Project 5.vcxproj -> C:\Users\arjen\source\repos\Project 5\x64\Debug\Project 5.exe
