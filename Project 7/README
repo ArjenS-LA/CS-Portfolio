@@ -5,20 +5,6 @@ Your only hope to keep from passing out is to successfully preach to the Tooters
 
 That's the scenario for a new video game under development. Your assignment is to complete the prototype that uses character-based graphics.
 
-If you execute this Windows program or this Mac program or this Linux program, you will see the player (indicated by @) in a rectangular city filled with Tooters (usually indicated by T). 
-At each turn, the user will select an action for the player to take. The player will take the action, and then each Tooter will move one step in a random direction. 
-The attempt to move will make each Tooter break wind. If the Tooter is orthogonally adjacent to the player, the player is affected by the blast of gas. 
-If the player suffers twelve such blasts during the game, the player passes out and the game is over.
-
-This smaller Windows version or Mac version or Linux version of the game may help you see the operation of the game more clearly.
-
-(You can run the Linux version by logging in to cs31.seas.ucla.edu and running the command /usr/local/cs/bin/toot or /usr/local/cs/bin/minitoot. 
-On a Mac, if you click on the downloaded zip file and then double-click on the executable file (e.g., tootmac), your operating system may refuse to open it because it can't confirm who developed the program. 
-In that case, right-click on the executable file instead, select Open With and then Terminal.app. Select the gray Open button on the popup that again says it doesn't know the developer. 
-If your Windows system refuses to run the Windows version because it thinks it has a virus, then if you trust me when I say I built the program myself on the SEASnet Windows server with no virus in the source code, 
-and you trust the SEASnet people to not have installed a devious compiler that inserts a virus into code it compiles, and you know how to disable your antivirus software or otherwise get around the refusal,
-then you can run the Windows version; otherwise, run the Linux version as described at the start of this paragraph.)
-
 At each turn the player may take one of these actions:
 
 Move one step up, down, left, or right to an empty position (i.e., one not occupied by a Tooter). 
