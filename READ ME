@@ -1,0 +1,116 @@
+PROJECT 5 SPEC:
+When a browser renders text onto a screen or in a window of a certain width, or when a program like Microsoft Word formats text between margins of a certain width, it tries to fit as many words in each line as it can. For this project, you will implement a function that renders text from a plain text file into neatly arranged paragraphs with a particular maximum allowed line length. For example, if the desired maximum line length is 40 characters and the input text is
+
+It always does seem to me that I am doing more work than
+I should do. It is not that I object to the work, mind you;
+I like work: it fascinates me.       I can sit and look at it for hours.
+I love to keep     it by me: the idea of getting
+rid
+of it nearly breaks my heart. @P@ You cannot give me too
+much work; to accumulate work has almost become
+
+
+a passion with me: my study is so full of it now, that there is hardly
+an inch of room for any more.
+then the output text will be
+
+It always does seem to me that I am
+doing more work than I should do.  It is
+not that I object to the work, mind you;
+I like work:  it fascinates me.  I can
+sit and look at it for hours.  I love to
+keep it by me:  the idea of getting rid
+of it nearly breaks my heart.
+
+You cannot give me too much work; to
+accumulate work has almost become a
+passion with me:  my study is so full of
+it now, that there is hardly an inch of
+room for any more.
+from Jerome K. Jerome's Three Men in a Boat (To Say Nothing of the Dog).
+
+You are to implement the following function, whose job it is to do the rendering:
+
+	int render(int lineLength, istream& inf, ostream& outf);
+You may name the parameters something else, but there must be three parameters of the indicated types in the indicated order. (The File I/O tutorial explains istream and ostream.) The parameters are
+
+an int with the desired maximum line length
+an already-opened input source you will read from (probably a file the caller opened).
+an already-opened output destination you will write to (probably either cout or an output file the caller created)
+The function must return an int with one of the following values:
+
+0 if is successful (i.e., neither of the following problems occurs)
+1 if any input word portion (defined below) is longer than the maximum line length
+2 if the desired maximum line length is less than 1
+In the case of the error situation that would cause the function to return 2, it must return 2 without writing any output.
+
+Your render function may, of course, call other functions you write to help it do its job. You can test your render function by calling it from a main routine of your choosing. Our grading tool will ignore your main routine by renaming it to something harmless. If you wish, your main routine could prompt the user for the file names and the line length. Alternatively, it could hardcode the names of the files to use and prompt for only a line length. Do whatever works best for you to help you test your function. Here is an example:
+
+    int main()
+    {
+        const int MAX_FILENAME_LENGTH = 100;
+        for (;;)
+        {
+            cout << "Enter input file name (or q to quit): ";
+            char filename[MAX_FILENAME_LENGTH];
+            cin.getline(filename, MAX_FILENAME_LENGTH);
+            if (strcmp(filename, "q") == 0)
+                break;
+            ifstream infile(filename);
+            if (!infile)
+            {
+                cerr << "Cannot open " << filename << "!" << endl;
+                continue;
+            }
+            cout << "Enter maximum line length: ";
+            int len;
+            cin >> len;
+            cin.ignore(10000, '\n');
+            int returnCode = render(len, infile, cout);
+            cout << "Return code is " << returnCode << endl;
+        }
+    }
+We use the following definitions in the rendering rules:
+
+A word is a sequence of non-whitespace characters not immediately preceded or followed by a non-whitespace character. (The <cctype> function isspace tells you if a character is a whitespace character.) The string "swan's nest" contains two words, swan's and nest. Because of immediately preceding or following non-whitespace, swan, wa, 's, and nes are not words of that string.
+A word can be viewed as a sequence of one or more word portions. The first word portion in a word starts at the start of the word; subsequent word portions in a word start just after the last character of the previous word portion. The last character of a word portion is the first hyphen at or after the start of that word portion, or the end of the word if there is no hyphen after the start of that word portion. Here are examples, including some pathological ones:
+	Word                Word portions
+	Thames              Thames
+	so-called           so- and called
+	Henley-on-Thames    Henley-, on-, and Thames
+	so--called          so-, -, and called
+	so-                 so-
+	-so                 -,  and  so
+Here are the rendering rules:
+
+Fit as many word portions in an output line as you can without exceeding the line length. Output lines may well end up being different lengths, giving a "ragged-right" effect; your renderer will not try to right-justify the text.
+
+Words in an output line must normally be separated by one blank. However, if the last character of an output word is a period, question mark, exclamation point, or colon, it must be separated from any following word on that output line by two blanks. The last word on an output line must not be followed by any blanks. The first word portion on an output line must not be preceded by any blanks. Blanks must not appear on an output line within any word. The last line of output must end with a newline, and there must be no output lines (not even empty ones) after the last word of the last paragraph. For example, if the last word in the input is bye, then the last four characters your function would write are 'b'  'y'  'e'  '\n'. That does not produce an empty last line. Writing this would produce an empty last line, in violation of this rule: 'b'  'y'  'e'  '\n'  '\n'.
+
+Notice that this rule implies that if a word containing a hyphen is broken at a hyphen to fit on an output line, the hyphen must be the last character of one output line, and the character after the hyphen must be the first character of the next output line.
+
+If a word portion is longer than the line length, as much as will fit must be on an output line by itself. The rest of that word portion must begin the next output line (and, of course, is subject to similar splitting if it's too long). If this situation ever occurs, your function continues rendering, but it must eventually return 1 instead of 0 to its caller. Notice that this is the only situation where a word is allowed to be split across lines other than at a hyphen.
+
+The input word @P@ is not to be processed as a word according to the above rules; instead, it indicates a paragraph break. The first word in the input following a paragraph break will be the first word of a new paragraph in the output. If a paragraph has already been output, the new paragraph must be separated from the one that precedes it by an empty line (i.e., a line with no characters other than the terminating newline). The very first output paragraph must not be preceded by an empty line. The very last output paragraph must not be followed by an empty line. Two or more consecutive @P@ words in the input are treated as just one paragraph break. Notice that banjo@P@ is one eight-character word; it does not cause a paragraph break, because in that string, @P@ is not a word because of the immediately preceding non-whitespace character o.
+
+Notice that these rules imply that if the line length is valid but the input contains no words, render must return 0 without writing any output whatsoever.
+
+Your render function and any functions you write that it calls directly or indirectly must not use any std::string objects. If you need to use a string, use a C string. Your function may assume that no input line will be 180 or more characters long (i.e., we will not test it with input lines that long).
+
+This project is doable without assuming any upper limit for the output line length (the first parameter of render) — rather than storing the parts of an output line in a C string to be written later, you instead write them as soon as you can. However, some people may not figure out how to do that, so we'll give you a choice. If the first parameter of render is greater than 250, your implementation of render must either:
+
+return 2 without writing any output; or
+render the text using the indicated line length, returning 0 or 1 as appropriate (i.e., your algorithm doesn't impose any upper limit on the output line length). Implementing this choice correctly (instead of returning 2 and producing no output) is worth 5 bonus points.
+(Although the program you turn in must not use any C++ strings, only C strings, you might want to consider this development strategy: Ignore this restriction at first, and develop a working solution that uses C++ strings. After you've ironed out the issues in writing the renderer, save a backup, and then convert your using C++ strings to using C strings instead. This approach helps you avoid confusing the mistakes in your use of C strings with the mistakes in your rendering algorithm, so might make debugging easier.)
+
+Your render function and any functions you write that it calls directly or indirectly must not read from any source other than the istream passed as the second parameter and must not write to any destination other than the ostream passed as the third parameter, except that you may write anything you want to cerr. Our grading tool will discard anything written to cerr, so feel free to use it for debugging purposes.
+
+Your program must not use any global variables whose values may be changed during execution. Global constants are OK.
+
+The program you turn in must build successfully under both g31 and either Visual C++ or clang++, and its correctness must not depend on undefined program behavior. Your program could not, for example, assume anything about s's value in the following, or even whether or not the program crashes:
+
+	void f()
+	{
+	    char s[6];
+	    strcpy(s, "Thames");  // s is too short for 6+1 chars
+	    …
